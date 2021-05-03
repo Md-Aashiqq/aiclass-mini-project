@@ -11,10 +11,28 @@ function HomePage() {
         <div className='container'>
            
             <div className='left__container'>
-                <h1> Premium video meetings based on <span>   </span> </h1>
+                <h1> Premium video meetings based on <span>  AI </span> </h1>
+                <h2>Make your student always happy</h2>
+
+                <div className='new__meeting'>
+                     New Meeting
+                </div>
+
+                <div className="__or">--or--</div>
+
+
+                <div className="join__meeting">
+
+                        <input className="input__box" type="text" placeholder="paste link" />
+                        <button className="join__btn">Join</button>
+                </div>
+
+
             </div>
+
+
             <div className='rigth__container'>
-                <h1>AShick</h1>
+                <img src="../../lap.png" />
             </div>
 
         </div>
