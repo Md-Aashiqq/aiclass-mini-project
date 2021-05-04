@@ -1,5 +1,5 @@
 .container {
-  height: 85vh;
+  height: 100vh;
   background: #21242b;
   padding: 0px 8%;
   display: grid;
@@ -8,8 +8,8 @@
 }
 
 .left__container {
-  /* display: grid; */
-  /* place-content: center; */
+  /* display: grid;
+  align-items: center; */
 }
 
 .left__container h1 {
@@ -80,4 +80,13 @@
   background: #10b664;
   outline: none;
   color: #ffffff;
+}
+.rigth__container {
+  display: flex;
+  justify-content: center;
+  margin-top: 3em;
+}
+.rigth__container svg{
+  width: 400px;
+  height: 400px;
 }
