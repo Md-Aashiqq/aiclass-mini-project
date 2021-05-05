@@ -1,0 +1,63 @@
+.header {
+  background-color: #000000;
+  /* height: 123px; */
+  color: #10b664;
+  padding: 0px 8%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  /* padding: 10px; */
+  /* width: 80%; */
+  height: 100px;
+}
+svg {
+  width: 50px;
+  height: 50px;
+}
+
+.left__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header__title {
+  font-size: 18px;
+  text-transform: uppercase;
+  margin-left: 10px;
+}
+
+.btn__group {
+  display: flex;
+  justify-content: space-between;
+}
+
+.btn__group div {
+  padding: 10px;
+  outline: none;
+  margin: 0px 10px;
+  font-size: 16px;
+  background-color: #10b664;
+  color: #fff;
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: center;
+  width: 100px;
+  text-transform: capitalize;
+  /* transition: 3s ease-in; */
+}
+
+.signin__btn:hover {
+  background-color: #000000;
+  color: #10b664;
+  border: 2px solid #10b664;
+  border-radius: 5px;
+}
+
+.btn__group div.signup__btn {
+  background-color: #000000;
+  color: #10b664;
+  border: 2px solid #10b664;
+}
+
+
