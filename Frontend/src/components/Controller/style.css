@@ -1,0 +1,19 @@
+.controller__container {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  width: 100%;
+}
+
+.controller__container .icon {
+  font-size: 3rem;
+  color: #cebcbc;
+  /* padding: 1rem; */
+  padding: 5px;
+  border: 2px solid #ffffff;
+  border-radius: 7px;
+  cursor: pointer;
+}
+.controller__container .call__icon {
+  color: #b92424;
+}

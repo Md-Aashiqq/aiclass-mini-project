@@ -28,6 +28,8 @@ class Connection {
   streaming = false;
   myPeer;
   socket;
+  isSocketConnected = false;
+  isPeersConnected = false;
   myID = "";
   wholeroomID = "";
 
@@ -174,6 +176,65 @@ class Connection {
     const video = document.getElementById(id);
     if (video) video.remove();
   };
+
+  toggleVideoTrack = (status) => {
+    const myVideo = this.getMyVideo();
+    // @ts-ignore
+    if (myVideo && !status.video)
+      myVideo.srcObject?.getVideoTracks().forEach((track) => {
+        if (track.kind === "video") {
+          // track.enabled = status.video;
+          // this.socket.emit('user-video-off', {id: this.myID, status: true});
+          // changeMediaView(this.myID, true);
+          !status.video && track.stop();
+        }
+      });
+    else if (myVideo) {
+      // this.socket.emit('user-video-off', {id: this.myID, status: false});
+      // changeMediaView(this.myID, false);
+      this.reInitializeStream(status.video, status.audio);
+    }
+  };
+
+  getMyVideo = (id = this.myID) => {
+    return document.getElementById(id);
+  };
+
+  reInitializeStream = (video, audio, type = "userMedia") => {
+    // @ts-ignore
+    const media =
+      type === "userMedia"
+        ? this.getVideoAudioStream(video, audio)
+        : navigator.mediaDevices.getDisplayMedia();
+    return new Promise((resolve) => {
+      media.then((stream) => {
+        // @ts-ignore
+        const myVideo = this.getMyVideo();
+        if (type === "displayMedia") {
+          this.toggleVideoTrack({ audio, video });
+          this.listenToEndStream(stream, { video, audio });
+          this.socket.emit("display-media", true);
+        }
+        checkAndAddClass(myVideo, type);
+        this.createVideo({ id: this.myID, stream });
+        replaceStream(stream);
+        resolve(true);
+      });
+    });
+  };
+
+  listenToEndStream = (stream, status) => {
+    const videoTrack = stream.getVideoTracks();
+    if (videoTrack[0]) {
+      videoTrack[0].onended = () => {
+        this.socket.emit("display-media", false);
+        this.reInitializeStream(status.video, status.audio, "userMedia");
+        this.settings.updateInstance("displayStream", false);
+        this.toggleVideoTrack(status);
+      };
+    }
+  };
+
   destoryConnection = () => {
     const myMediaTracks = this.videoContainer[this.myID]?.stream.getTracks();
     myMediaTracks?.forEach((track) => {
@@ -184,6 +245,27 @@ class Connection {
   };
 }
 
+const checkAndAddClass = (video, type = "userMedia") => {
+  if (video?.classList?.length === 0 && type === "displayMedia")
+    video.classList.add("display-media");
+  else video.classList.remove("display-media");
+};
+const replaceStream = (mediaStream) => {
+  Object.values(peers).map((peer) => {
+    peer.peerConnection?.getSenders().map((sender) => {
+      if (sender.track.kind == "audio") {
+        if (mediaStream.getAudioTracks().length > 0) {
+          sender.replaceTrack(mediaStream.getAudioTracks()[0]);
+        }
+      }
+      if (sender.track.kind == "video") {
+        if (mediaStream.getVideoTracks().length > 0) {
+          sender.replaceTrack(mediaStream.getVideoTracks()[0]);
+        }
+      }
+    });
+  });
+};
 export function createSocketConnectionInstance(settings = {}) {
   return (socketInstance = new Connection(settings));
 }

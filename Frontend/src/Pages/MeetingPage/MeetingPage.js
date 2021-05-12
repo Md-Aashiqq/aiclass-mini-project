@@ -1,8 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import Header from "../../components/Header";
+// import Controller from "../../components/Controller/Controller";
 // import VidoeRoom from "../../components/VidoeRoom";
+import Chart from "../../components/Chart/Chart";
+
 import { createSocketConnectionInstance } from "../../Helper/socketConnection";
 import { CopyToClipboard } from "react-copy-to-clipboard";
+
 import CallIcon from "@material-ui/icons/CallEnd";
 import MicIcon from "@material-ui/icons/Mic";
 import MicOffIcon from "@material-ui/icons/MicOff";
@@ -26,17 +30,37 @@ function MeetingPage() {
   const [wholeRoomID, setwholeRoomID] = useState("");
 
   useEffect(() => {
-    startConnection();
+    return () => {
+      socketInstance.current?.destoryConnection();
+    };
   }, []);
-  const startConnection = () => {
-    const params = { quality: 12 };
-    socketInstance.current = createSocketConnectionInstance({
-      params,
-    });
 
-    console.log(socketInstance.current);
+  useEffect(() => {
+    if (userDetails) startConnection();
+  }, [userDetails]);
+
+  const startConnection = () => {
+    let params = { quality: 12 };
+    socketInstance.current = createSocketConnectionInstance({
+      updateInstance: updateFromInstance,
+      params,
+      userDetails,
+    });
   };
 
+  const updateFromInstance = (key, value) => {
+    if (key === "streaming") setStreaming(value);
+    if (key === "message") setMessages([...value]);
+    if (key === "displayStream") setDisplayStream(value);
+  };
+
+  const handleMyCam = () => {
+    if (!displayStream) {
+      const { toggleVideoTrack } = socketInstance.current;
+      toggleVideoTrack({ video: !camStatus, audio: micStatus });
+      setCamStatus(!camStatus);
+    }
+  };
   const copyLink = (link) => {
     setwholeRoomID(link);
   };
@@ -106,8 +130,29 @@ function MeetingPage() {
 
         <div className="vidoe__section" id="vidoe__container"></div>
       </div>
-      <div className="chart__section">chart</div>
-      <div className="btn__section">btn</div>
+      <div className="chart__section">
+        <Chart />
+      </div>
+      <div className="btn__section">
+        <div className="controller__container">
+          <div>
+            {micStatus ? (
+              <MicIcon className="mic__icon icon" />
+            ) : (
+              <MicOffIcon className="micOff__icon icon" />
+            )}
+          </div>
+
+          <CallIcon className="call__icon icon" />
+          <div onClick={handleMyCam}>
+            {camStatus ? (
+              <VideocamIcon className="video__icon icon" />
+            ) : (
+              <VideocamOffIcon className="vidoeOff__icon icon" />
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
